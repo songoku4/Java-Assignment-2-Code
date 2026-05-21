@@ -1,32 +1,33 @@
-package src.entities;
-import entities.PayableSalary;
+package entities;
 import enums.Designation;
 
-public abstract class Employee implements PayableSalary {
+public abstract class Employee implements Payable {
     
     private final String id;
     private final String name;
-    private final Designation designation;
+    private final Designation role;
     private final double baseSalary;
-    private final String managerId; 
     
-    private ShiftSummary shiftSummary;
+    // Every employee has their own summary to track hits and deliveries
+    private ShiftSummary myShiftSummary;
+    public void printPayslipBreakdown()
 
-    public Employee(String id, String name, Designation designation, double baseSalary, String managerId) {
+    public Employee(String id, String name, Designation role, double baseSalary) {
         this.id = id;
         this.name = name;
-        this.designation = designation;
+        this.role = role;
         this.baseSalary = baseSalary;
-        this.managerId = managerId;
-        this.shiftSummary = new ShiftSummary(); // Automatically gives them a fresh summary
+        this.myShiftSummary = new ShiftSummary(); 
     }
 
-    // ... (Getters for the variables omitted for brevity) ...
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public Designation getRole() { return role; }
+    public double getBaseSalary() { return baseSalary; }
+    
+    public ShiftSummary getShiftSummary() { return myShiftSummary; }
 
-    public ShiftSummary getShiftSummary() { 
-        return this.shiftSummary; 
-    }
-
+    // Child classes must provide the math for this
     @Override
     public abstract double calculateNetSalary();
 }
