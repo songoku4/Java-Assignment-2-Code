@@ -1,5 +1,4 @@
-package engine;
-
+import engine.WarehouseMap;
 import entities.*;
 import enums.Designation;
 import utils.FileManager;
@@ -16,15 +15,11 @@ public class WarehouseManagerEngine {
     private Map<String, Employee> employees;
     private WarehouseMap map;
     private boolean shiftStarted = false;
-    // Tracks if Option 2 has been pressed yet
-    private boolean payslipsGeneratedForSession = false; 
-    
-    // Tracks if we actually loaded historical data from payslips.csv at startup
+    private boolean payslipsGeneratedForSession = false;
     private boolean historicalPayslipsExist = false;
     private boolean shiftComplete = false;
 
     public static void main(String[] args) {
-        // 1. Check for exactly 5 arguments
         if (args.length != 5) {
             System.out.println("Invalid number of Command Line Arguments. Usage: java WarehouseManagerEngine <floors> <rows> <cols> <master file> <employees file>");
             return;
@@ -37,7 +32,6 @@ public class WarehouseManagerEngine {
             String mapFile = args[3];
             String empFile = args[4];
 
-            // 2. Validate bounds
             if (floors < 1 || floors > 3) {
                 System.out.println("Error: Number of floors has to be between 1 and 3.");
                 return;
@@ -47,7 +41,6 @@ public class WarehouseManagerEngine {
                 return;
             }
 
-            // 3. Verify files exist
             File mFile = new File(mapFile);
             File eFile = new File(empFile);
             if (!mFile.exists() || !eFile.exists()) {
@@ -55,7 +48,6 @@ public class WarehouseManagerEngine {
                 return;
             }
 
-            // 4. Boot up the system
             WarehouseManagerEngine engine = new WarehouseManagerEngine();
             engine.startSystem(floors, rows, cols, mapFile, empFile);
 
@@ -64,7 +56,7 @@ public class WarehouseManagerEngine {
         }
     }
 
-    private void startSystem(int floors, int rows, int cols, String mapFile, String empFile) {
+private void startSystem(int floors, int rows, int cols, String mapFile, String empFile) {
         String payslipFile = "data/payslips.csv";
 
         System.out.println("Processing Warehouse file: " + mapFile);
@@ -75,8 +67,13 @@ public class WarehouseManagerEngine {
         this.employees = FileManager.loadEmployees(empFile);
 
         System.out.println("Processing Payslips file: " + payslipFile);
-        // If payslips.csv exists, this is where you would load it. 
-        // For now, we proceed to login.
+        
+        File pFile = new File(payslipFile);
+        if (!pFile.exists()) {
+            System.out.println("Payslip file doesnt exist: " + payslipFile);
+        } else {
+            this.historicalPayslipsExist = true;
+        }
 
         System.out.println("Welcome to Warehouse Manager Assignment 2.");
         runLoginLoop(payslipFile);
@@ -94,7 +91,7 @@ public class WarehouseManagerEngine {
                 System.out.println("Saving Payslips file: " + payslipFile);
                 FileManager.writePayslips(payslipFile, this.employees);
                 System.out.println("Goodbye!");
-                running = false; 
+                running = false;
                 continue;
             }
 
@@ -109,10 +106,10 @@ public class WarehouseManagerEngine {
 
             if (loggedInUser.getRole() == Designation.OPERATOR || loggedInUser.getRole() == Designation.SENIOR_OPERATOR) {
                 runOperatorMenu(loggedInUser);
-            } 
+            }
             else if (loggedInUser.getRole() == Designation.SUPERVISOR) {
                 runSupervisorMenu((Supervisor) loggedInUser);
-            } 
+            }
             else if (loggedInUser.getRole() == Designation.PAYROLL_MANAGER) {
                 runPayrollMenu(loggedInUser);
             }
@@ -132,8 +129,8 @@ public class WarehouseManagerEngine {
 
             String choice = SCANNER.nextLine().trim();
             switch (choice) {
-                case "1": handleStartShift(); break;
-                case "2": handleResumeShift(); break;
+                case "1": handleStartShift(operator); break;
+                case "2": handleResumeShift(operator); break;
                 case "3": operator.getShiftSummary().printSummary(); break;
                 case "4": handleViewPayslip(operator); break;
                 case "5": loggedIn = false; break;
@@ -156,15 +153,13 @@ public class WarehouseManagerEngine {
 
             String choice = SCANNER.nextLine().trim();
             switch (choice) {
-                case "1": handleStartShift(); break;
-                case "2": handleResumeShift(); break;
+                case "1": handleStartShift(supervisor); break;
+                case "2": handleResumeShift(supervisor); break;
                 case "3": supervisor.getShiftSummary().printSummary(); break;
                 case "4": handleViewPayslip(supervisor); break;
-                case "5": 
+                case "5":
                     for (Employee teamMember : supervisor.getReportees()) {
-                        System.out.println("\nEmployee Id: " + teamMember.getId() + 
-                                           ", Employee Name: " + teamMember.getName() + 
-                                           ", Designation: " + teamMember.getRole());
+                        System.out.println("\nEmployee Id: " + teamMember.getId() + ", Employee Name: " + teamMember.getName() + ", Designation: " + teamMember.getRole());
                         teamMember.getShiftSummary().printSummary();
                     }
                     break;
@@ -174,7 +169,7 @@ public class WarehouseManagerEngine {
         }
     }
 
-private void runPayrollMenu(Employee manager) {
+    private void runPayrollMenu(Employee manager) {
         boolean loggedIn = true;
         while (loggedIn) {
             System.out.println("\n=== Payroll Manager Menu — " + manager.getName() + " [" + manager.getRole() + "] ===");
@@ -185,65 +180,38 @@ private void runPayrollMenu(Employee manager) {
             System.out.print("> ");
 
             String choice = SCANNER.nextLine().trim();
-            
             switch (choice) {
-                case "1": 
-                    handleViewAllSummaries(); 
-                    break;
-                case "2": 
-                    handleGeneratePayslips(); 
-                    break;
-                case "3": 
-                    handleViewAllPayslips(); 
-                    break;
-                case "4": 
-                    loggedIn = false; 
-                    break;
-                default: 
-                    System.out.println("Invalid input."); 
-                    break;
+                case "1": handleViewAllSummaries(); break;
+                case "2": handleGeneratePayslips(); break;
+                case "3": handleViewAllPayslips(); break;
+                case "4": loggedIn = false; break;
+                default: System.out.println("Invalid input."); break;
             }
         }
     }
 
-private void handleViewAllSummaries() {
-        // Loop through the LinkedHashMap to preserve the file order!
+    private void handleViewAllSummaries() {
         for (Employee emp : this.employees.values()) {
-            System.out.println("\nEmployee Id: " + emp.getId() + 
-                               ", Employee Name: " + emp.getName() + 
-                               ", Designation: " + emp.getRole());
-            
+            System.out.println("\nEmployee Id: " + emp.getId() + ", Employee Name: " + emp.getName() + ", Designation: " + emp.getRole());
             emp.getShiftSummary().printSummary();
         }
     }
 
     private void handleGeneratePayslips() {
-        // Simply flip the flag. The actual math happens dynamically when we print or save.
         this.payslipsGeneratedForSession = true;
         System.out.println("Payslips generated successfully.");
     }
 
     private void handleViewAllPayslips() {
         try {
-            // Scenario 3: No file exists AND they haven't pressed Option 2 yet
             if (!this.historicalPayslipsExist && !this.payslipsGeneratedForSession) {
                 throw new exceptions.NotFoundException("Payslip not generated yet.");
             }
 
-            // Scenario 1 & 2: We either have old data or new data. 
-            // In a simple architecture, we just print the live calculated data.
             for (Employee emp : this.employees.values()) {
                 System.out.println("\nEmployeeID: " + emp.getId());
                 System.out.println("Employee Name: " + emp.getName());
-                
-                // Formatting to 2 decimal places exactly as shown in the spec
                 System.out.printf("Base salary: %.2f\n", emp.getBaseSalary());
-                
-                // Because calculating the exact breakdown (Delivery Pay, Penalties) 
-                // requires knowing the employee's role, we can add a printPayslipFormat() 
-                // method inside the Employee classes to keep the Engine clean, 
-                // OR just print the Net Salary here.
-                
                 System.out.printf("Net Salary: %.2f\n", emp.calculateNetSalary());
                 System.out.println("=======================");
             }
@@ -253,16 +221,16 @@ private void handleViewAllSummaries() {
         }
     }
 
-    private void handleStartShift() {
+    private void handleStartShift(Employee emp) {
         if (this.shiftComplete) {
             System.out.println("All shelves in the warehouse are empty and nothing to deliver. Returning to main menu.");
             return;
         }
         this.shiftStarted = true;
-        runFloorSelectionLoop();
+        runFloorSelectionLoop(emp);
     }
 
-    private void handleResumeShift() {
+    private void handleResumeShift(Employee emp) {
         if (!this.shiftStarted) {
             System.out.println("Shift not started, cannot resume shift.");
             return;
@@ -271,13 +239,13 @@ private void handleViewAllSummaries() {
             System.out.println("All shelves in the warehouse are empty and nothing to deliver. Returning to main menu.");
             return;
         }
-        runFloorSelectionLoop();
+        runFloorSelectionLoop(emp);
     }
 
-    private void runFloorSelectionLoop() {
+    private void runFloorSelectionLoop(Employee emp) {
         boolean inShift = true;
         while (inShift) {
-            this.map.printCurrentState();
+            this.map.printCurrentState(); 
             System.out.print("Enter a floor number to navigate the warehouse or X to return to the main menu : ");
             String input = SCANNER.nextLine().trim();
 
@@ -289,8 +257,7 @@ private void handleViewAllSummaries() {
             try {
                 int floorNum = Integer.parseInt(input);
                 if (this.map.getForkliftForFloor(floorNum) != null) {
-                    System.out.println("Moving to floor " + floorNum + " (Movement logic to be implemented)");
-                    // runMovementLoop(floorNum);
+                    runMovementLoop(floorNum, emp); 
                 } else {
                     System.out.println("Invalid Input");
                 }
@@ -300,10 +267,35 @@ private void handleViewAllSummaries() {
         }
     }
 
+    private void runMovementLoop(int floorNum, Employee emp) {
+        boolean onFloor = true;
+        
+        while (onFloor) {
+            this.map.printSingleFloor(floorNum);
+
+            System.out.println("Enter direction:");
+            System.out.println("U - Up.");
+            System.out.println("D - Down.");
+            System.out.println("L - Left.");
+            System.out.println("R - Right.");
+            System.out.println("T - Deliver carried item at START (O).");
+            System.out.println("Q - Quit to main menu.");
+            System.out.print("> ");
+
+            String direction = SCANNER.nextLine().trim().toUpperCase();
+
+            if (direction.equals("Q")) {
+                System.out.println("Shift paused.");
+                onFloor = false;
+            } else {
+                System.out.println("Movement direction logged: " + direction);
+            }
+        }
+    }
+
     private void handleViewPayslip(Employee emp) {
         try {
-            // For now, assume it hasn't been generated to trigger the correct exception
-            boolean isGenerated = false; 
+            boolean isGenerated = this.payslipsGeneratedForSession; 
             if (!isGenerated) {
                 throw new NotFoundException("Employee " + emp.getId() + "'s payslip not found.");
             }

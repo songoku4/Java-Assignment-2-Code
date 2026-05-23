@@ -1,0 +1,10 @@
+employee_id,employee_name,designation,base_salary,manager
+E001,James Carter,OPERATOR,1400,E005
+E002,Priya Nair,SENIOR_OPERATOR,1050,E008
+E005,Noah Patel,SUPERVISOR,3000,
+E007,Anna Rodriguez,SENIOR_OPERATOR,1500,E005
+E008,,,3000,
+E009,Alison Smith,OPERATOR,1400,E011
+E010,Carol White,SENIOR_OPERATOR,0,E005
+E011,David Brown,SUPERVISOR,2000,
+E012,Emma Green,PAYROLL_MANAGER,3000,

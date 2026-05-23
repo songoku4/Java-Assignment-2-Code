@@ -1,0 +1,14 @@
+floor,row,col,cell_type,shelf_type,item_name
+1,1,2,SHELF,FURNITURE,
+1,1,2,SHELFF,CLOTHING,
+3,1,2,SHELF,CLOTHING,Blouse
+1,2,2,SHELF,APPLIANCES,Storage Cabinet
+1,2,2,RESTRICTED,-,-
+1,2,3,SHELF,FURNITURE,Bookshelf
+3,2,2,RESTRICTED,-,-
+2,1,3,SHELF,ELECTRONICS,Tablet Stand
+2,2,2,SHELF,GROCERY,Tea Pack
+2,1,3,SHELF,ELECTRONICS,Noise Cancelling Headphones
+2,2,2,SHELF,GROCERY,Milk
+2,1,1,,,Tea Pack
+3,1,2,SHELF,CLOTHING,Cotton Hoodie

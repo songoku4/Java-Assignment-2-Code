@@ -1,0 +1,9 @@
+employee_id,employee_name,designation,base_salary,manager
+E001,James Carter,OPERATOR,1400,
+E002,Priya Nair,SENIOR_OPERATOR,1050,E005
+E003,Liam Chen,PAYROLL_MANAGER,3100,
+
+E004,Sofia Mendez,PAYROLL_SUPERVISOR,2200,
+E005,Noah Patel,SUPERVISOR,3000,
+,Yuki Tanaka,OPERATOR,1100,E005
+E007,Anna Rodriguez,SENIOR_OPERATOR,1500,E005

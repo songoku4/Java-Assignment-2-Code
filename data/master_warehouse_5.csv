@@ -1,0 +1,11 @@
+floor,row,col,cell_type,shelf_type,item_name
+2,3,3,SHELF,ELECTRONICS,Keyboard
+1,4,5,SHELF,FURNITURE,Bedside Table
+1,7,6,RESTRICTED,-,-
+2,6,3,RESTRICTED,-,-
+2,3,3,SHELF,ELECTRONICS,Gaming Mouse
+2,6,3,RESTRICTED,-,-
+2,5,4,SHELF,CLOTHING,Rain Jacket
+2,5,4,RESTRICTED,-
+1,3,5,SHELF,FURNITURE,Wooden Desk
+1,3,5,SHELF,FURNITURE,Cupboard

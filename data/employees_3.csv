@@ -1,0 +1,10 @@
+employee_id,employee_name,designation,base_salary,manager
+E001,James Carter,SUPERVISOR,1400,
+E002,Priya Nair,SENIOR_OPERATOR,1050,E001
+
+E003,Michael Lee,PAYROLL_MANAGER,1500,E001
+,Sam Smith,LINE_WORKER,1100,E001
+E004,Matthew Taylor,SUPERVISOR,3000,
+E005,Noah Patel,OPERATOR,3000,E004
+E006,Isabella Martinez,LINE_WORKER,3200,
+E008,Olivia Davis,OPERATOR,-1050,
